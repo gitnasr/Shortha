@@ -2,7 +2,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Shortha.DTO;
+using Shortha.Interfaces;
 using Shortha.Models;
+using Shortha.Repository;
 using System.Text;
 
 namespace Shortha
@@ -19,8 +22,12 @@ namespace Shortha
             builder.Services.AddOpenApi();
 
             builder.Services.AddDbContext<AppDB>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+                .EnableDetailedErrors()
+                .EnableSensitiveDataLogging());
+               
+            builder.Services.AddScoped<IURL, UrlRepository>();
+            builder.Services.AddAutoMapper(typeof(AutoMapperConfiguration));
             builder.Services.AddIdentity<AppUser, IdentityRole>(
                 options =>
                 {

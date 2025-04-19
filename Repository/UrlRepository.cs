@@ -1,0 +1,62 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Shortha.Helpers;
+using Shortha.Interfaces;
+using Shortha.Models;
+
+namespace Shortha.Repository
+{
+    public class UrlRepository : IURL
+    {
+        private readonly AppDB AppDB;
+        public UrlRepository(AppDB appDB)
+        {
+
+            AppDB = appDB;
+
+        }
+        public Url? GetUrl(string url)
+        {
+          return AppDB.Urls.FirstOrDefault(x => x.OriginalUrl == url);
+
+        }
+        public Url? GetUrlById(Guid id)
+        {
+            return AppDB.Urls.FirstOrDefault(x => x.Id == id);
+        }
+        public Url? GetUrlByShortUrl(string shortUrl)
+        {
+            return AppDB.Urls.FirstOrDefault(x => x.ShortHash == shortUrl);
+        }
+        public async Task<IEnumerable<Url>>? GetUrlsByUserId(string userId)
+        {
+            return await AppDB.Urls.Where(x => x.UserId == userId).ToListAsync();
+        }
+        public async Task<IEnumerable<Url>>? GetUrlsByUserId(string userId, int pageNumber, int pageSize)
+        {
+
+            return await AppDB.Urls.Where(x => x.UserId == userId)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
+
+        public Url CreateUrl(Url url)
+        {
+            ShortHash hashServiec = new();
+            string urlHash = hashServiec.GenerateHash(url.OriginalUrl);
+
+            // Check if the hash already exists: 1/10000 Propability of collision, but we can handle it
+            while (this.AppDB.Urls.Any(x => x.ShortHash == urlHash))
+            {
+                urlHash = hashServiec.GenerateHash(url.OriginalUrl);
+            }
+
+            url.ShortHash = urlHash;
+
+            this.AppDB.Urls.Add(url);
+            this.AppDB.SaveChanges();
+            return url;
+        }
+    }
+  
+}

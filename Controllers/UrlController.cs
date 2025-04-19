@@ -1,0 +1,76 @@
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Shortha.DTO;
+using Shortha.Helpers;
+using Shortha.Interfaces;
+using Shortha.Models;
+
+namespace Shortha.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class UrlController : ControllerBase
+    {
+        private readonly IURL UrlRepo;
+        private readonly IMapper Mapper;
+
+        public UrlController(IURL _url, IMapper mapper )
+        {
+            UrlRepo = _url;
+            Mapper = mapper;
+        }
+        [HttpPost]
+        public IActionResult CreateNew([FromBody] UrlCreateRequest SubmittedURL)
+        {
+            if (ModelState.IsValid)
+            {
+               
+                 Url url = UrlRepo.CreateUrl(Mapper.Map<Url>(SubmittedURL));
+                return Ok(url);
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
+
+        [HttpGet]
+        public  IActionResult GetUrlByHashAsync([FromBody] GetUrlFromHashRequest SubmittedHash)
+        {
+            Url? url =  UrlRepo.GetUrlByShortUrl(SubmittedHash.hash);
+            if (url != null)
+            {
+                string? userAgent = HttpContext.Request.Headers.UserAgent;
+                string? ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                if (string.IsNullOrEmpty(userAgent) || string.IsNullOrEmpty(ipAddress))
+                {
+                    return BadRequest();
+                }
+                Tracker t = new Tracker(userAgent);
+                string browser = t.GetBrowser();
+                string os = t.GetOs();
+
+                
+
+
+                // Register a Visit
+                //Mapper.Map<PublicUrlResponse>(url)
+                return Ok(new
+                {
+                 
+                    Browser = browser,
+                    OS = os,
+                    IPAddress = ipAddress,
+                    Device = t.GetDevice(),
+                    A = t.GetBrand()
+                });
+                
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+    }
+}
