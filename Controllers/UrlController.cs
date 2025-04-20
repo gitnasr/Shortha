@@ -2,6 +2,7 @@
 using IPinfo;
 using Microsoft.AspNetCore.Mvc;
 using Shortha.DTO;
+using Shortha.Filters;
 using Shortha.Interfaces;
 using Shortha.Models;
 
@@ -37,34 +38,24 @@ namespace Shortha.Controllers
         }
 
         [HttpGet]
+        [ServiceFilter(typeof(GetUrlValidation))]
         public IActionResult GetUrlByHash([FromQuery] GetUrlFromHashRequest SubmittedHash)
         {
-            if (SubmittedHash.fingerprint == null || SubmittedHash.fingerprint == string.Empty)
-            {
-                return BadRequest("Bad Request");
-            }
+
             Url? url = UrlRepo.GetUrlByShortUrl(SubmittedHash.hash);
             if (url != null)
             {
-                string? userAgent = HttpContext.Request.Headers.UserAgent;
-                string? ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-                if (string.IsNullOrEmpty(userAgent) || string.IsNullOrEmpty(ipAddress))
-                {
-                    return BadRequest();
-                }
-                var Builder = new TrackerBuilder(userAgent, ipAddress, client);
+                // access tracker is easy now
+                var tracker = HttpContext.Items["Tracker"] as Tracker;
 
-                Tracker t = Builder.WithBrowser().WithOs().WithBrand().WithModel()
-                    .WithIpAddress()
-                    .Build();
+                return Ok(tracker);
 
-
-                return Ok(Mapper.Map<PublicUrlResponse>(url));
+                //return Ok(Mapper.Map<PublicUrlResponse>(url));
 
             }
             else
             {
-                return NotFound();
+                return NotFound(new ErrorResponse(System.Net.HttpStatusCode.NotFound, "URL is Deleted or Not Found"));
             }
         }
     }

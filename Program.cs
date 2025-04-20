@@ -1,10 +1,13 @@
 ﻿using IPinfo;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Shortha.DTO;
+using Shortha.Filters;
 using Shortha.Interfaces;
+using Shortha.Middlewares;
 using Shortha.Models;
 using Shortha.Repository;
 using System.Text;
@@ -28,7 +31,7 @@ namespace Shortha
                 .EnableSensitiveDataLogging());
 
             builder.Services.AddScoped<IURL, UrlRepository>();
-
+            builder.Services.AddScoped<GetUrlValidation>();
             builder.Services.AddScoped(provider =>
             {
                 string token = "5b9b5c5ca0844a";
@@ -36,6 +39,23 @@ namespace Shortha
                     .AccessToken(token)
                     .Build();
             });
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = context =>
+                {
+                    var errors = context.ModelState
+                        .Where(x => x.Value.Errors.Count > 0)
+                        .ToDictionary(
+                            kvp => kvp.Key,
+                            kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                        );
+
+                    var response = new ErrorResponse(System.Net.HttpStatusCode.BadRequest, "Validation Failed", errors);
+
+                    return new BadRequestObjectResult(response);
+                };
+            });
+
 
             builder.Services.AddAutoMapper(typeof(AutoMapperConfiguration));
             builder.Services.AddIdentity<AppUser, IdentityRole>(
@@ -81,7 +101,7 @@ namespace Shortha
             {
                 app.MapOpenApi();
             }
-
+            app.UseMiddleware<GlobalExceptionMiddleware>();
             app.UseHttpsRedirection();
             app.UseAuthentication();
 
