@@ -1,4 +1,5 @@
-﻿using Shortha.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using Shortha.Interfaces;
 using Shortha.Models;
 
 namespace Shortha.Repository
@@ -25,7 +26,6 @@ namespace Shortha.Repository
                 City = visit.City,
                 UrlId = urlId,
                 UserAgent = visit.UserAgent,
-                VisitDate = DateTime.UtcNow,
 
             };
 
@@ -36,14 +36,19 @@ namespace Shortha.Repository
 
         }
 
-        public Visit? GetVisitById(Guid id)
+        public Visit? GetVisitById(int id)
         {
-            throw new NotImplementedException();
+
+            return _dbContext.Visits.FirstOrDefault(v => v.Id == id);
+
         }
 
-        public Task<IEnumerable<Visit>>? GetVisitsByShortUrl(string shortUrl)
+        public async Task<IEnumerable<Visit>>? GetVisitsByShortUrl(string shortUrl)
         {
-            throw new NotImplementedException();
+            return await _dbContext.Visits
+                .Include(v => v.Url)
+                 .Where(v => v.Url.ShortHash == shortUrl).ToListAsync();
+
         }
 
         public Task<IEnumerable<Visit>>? GetVisitsByUserId(string userId)

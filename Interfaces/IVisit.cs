@@ -4,7 +4,7 @@ namespace Shortha.Interfaces
 {
     public interface IVisit
     {
-        public Visit? GetVisitById(Guid id);
+        public Visit? GetVisitById(int id);
 
         public Task<IEnumerable<Visit>>? GetVisitsByShortUrl(string shortUrl);
 
