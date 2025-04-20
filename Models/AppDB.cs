@@ -8,7 +8,7 @@ namespace Shortha.Models
 
     {
         public DbSet<Url> Urls { get; set; } = null!;
-        public DbSet<Visits> Visits { get; set; } = null!;
+        public DbSet<Visit> Visits { get; set; } = null!;
 
         public AppDB(DbContextOptions<AppDB> options) : base(options)
         {

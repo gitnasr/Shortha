@@ -15,7 +15,7 @@
         public virtual AppUser? User { get; set; } = null; // Navigation property for the user who created the URL, maybe null if not logged in
         public string? UserId { get; set; } = null;
 
-        public virtual List<Visits> Visits { get; set; } = new List<Visits>(); // Navigation property for visits to this URL
+        public virtual List<Visit> Visits { get; set; } = new List<Visit>(); // Navigation property for visits to this URL
 
 
 

@@ -31,6 +31,7 @@ namespace Shortha
                 .EnableSensitiveDataLogging());
 
             builder.Services.AddScoped<IURL, UrlRepository>();
+            builder.Services.AddScoped<IVisit, VisitRepository>();
             builder.Services.AddScoped<GetUrlValidation>();
             builder.Services.AddScoped(provider =>
             {

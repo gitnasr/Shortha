@@ -1,6 +1,6 @@
 ﻿namespace Shortha.Models
 {
-    public class Visits
+    public class Visit
     {
         public int Id { get; set; }
         public DateTime VisitDate { get; set; } = DateTime.UtcNow;
@@ -14,9 +14,8 @@
         public string? DeviceType { get; set; } = null;
         public string? Browser { get; set; } = null;
         public string? Os { get; set; } = null;
-        public Guid UrlId { get; set; } // Foreign key to the URL
-        public virtual required Url Url { get; set; }  // Navigation property for the URL
-        public int Count { get; set; } = 1; // Count of visits to this URL
+        public required Guid UrlId { get; set; } // Foreign key to the URL
+        public virtual Url Url { get; set; }  // Navigation property for the URL
 
     }
 }

@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Shortha.Models.Configuration
 {
-    public class VisitConfiguration : IEntityTypeConfiguration<Visits>
+    public class VisitConfiguration : IEntityTypeConfiguration<Visit>
     {
-        public void Configure(EntityTypeBuilder<Visits> builder)
+        public void Configure(EntityTypeBuilder<Visit> builder)
         {
             builder.HasKey(v => v.Id);
             builder.Property(v => v.VisitDate).IsRequired().HasDefaultValueSql("GETDATE()");
@@ -19,7 +19,6 @@ namespace Shortha.Models.Configuration
             builder.Property(v => v.DeviceType).IsRequired(false);
             builder.Property(v => v.Browser).IsRequired(false);
             builder.Property(v => v.Os).IsRequired(false);
-            builder.Property(v => v.Count).IsRequired().HasDefaultValue(0);
             builder.HasOne(v => v.Url)
                 .WithMany(u => u.Visits)
                 .HasForeignKey(v => v.UrlId)

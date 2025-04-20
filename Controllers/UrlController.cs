@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using IPinfo;
 using Microsoft.AspNetCore.Mvc;
 using Shortha.DTO;
 using Shortha.Filters;
@@ -14,12 +13,12 @@ namespace Shortha.Controllers
     {
         private readonly IURL UrlRepo;
         private readonly IMapper Mapper;
-        private readonly IPinfoClient client;
-        public UrlController(IURL _url, IMapper mapper, IPinfoClient client)
+        private readonly IVisit VisitsRepo;
+        public UrlController(IURL _url, IMapper mapper, IVisit visitsRepo)
         {
             UrlRepo = _url;
             Mapper = mapper;
-            this.client = client;
+            VisitsRepo = visitsRepo;
         }
         [HttpPost]
         public IActionResult CreateNew([FromBody] UrlCreateRequest SubmittedURL)
@@ -48,9 +47,13 @@ namespace Shortha.Controllers
                 // access tracker is easy now
                 var tracker = HttpContext.Items["Tracker"] as Tracker;
 
-                return Ok(tracker);
+                bool vist = VisitsRepo.CreateVisit(tracker, url.Id);
+                if (!vist)
+                {
+                    return StatusCode(500, new ErrorResponse(System.Net.HttpStatusCode.InternalServerError, "Somethin went error"));
+                }
 
-                //return Ok(Mapper.Map<PublicUrlResponse>(url));
+                return Ok(Mapper.Map<PublicUrlResponse>(url));
 
             }
             else
