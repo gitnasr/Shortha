@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shortha.DTO;
 using Shortha.Helpers;
@@ -15,7 +14,7 @@ namespace Shortha.Controllers
         private readonly IURL UrlRepo;
         private readonly IMapper Mapper;
 
-        public UrlController(IURL _url, IMapper mapper )
+        public UrlController(IURL _url, IMapper mapper)
         {
             UrlRepo = _url;
             Mapper = mapper;
@@ -25,9 +24,10 @@ namespace Shortha.Controllers
         {
             if (ModelState.IsValid)
             {
-               
-                 Url url = UrlRepo.CreateUrl(Mapper.Map<Url>(SubmittedURL));
-                return Ok(url);
+
+                Url url = UrlRepo.CreateUrl(Mapper.Map<Url>(SubmittedURL));
+                CreatedUrl CreatedURL = Mapper.Map<CreatedUrl>(url);
+                return Ok(CreatedURL);
             }
             else
             {
@@ -36,9 +36,9 @@ namespace Shortha.Controllers
         }
 
         [HttpGet]
-        public  IActionResult GetUrlByHashAsync([FromBody] GetUrlFromHashRequest SubmittedHash)
+        public IActionResult GetUrlByHashAsync([FromBody] GetUrlFromHashRequest SubmittedHash)
         {
-            Url? url =  UrlRepo.GetUrlByShortUrl(SubmittedHash.hash);
+            Url? url = UrlRepo.GetUrlByShortUrl(SubmittedHash.hash);
             if (url != null)
             {
                 string? userAgent = HttpContext.Request.Headers.UserAgent;
@@ -51,21 +51,21 @@ namespace Shortha.Controllers
                 string browser = t.GetBrowser();
                 string os = t.GetOs();
 
-                
+
 
 
                 // Register a Visit
                 //Mapper.Map<PublicUrlResponse>(url)
                 return Ok(new
                 {
-                 
+
                     Browser = browser,
                     OS = os,
                     IPAddress = ipAddress,
                     Device = t.GetDevice(),
                     A = t.GetBrand()
                 });
-                
+
             }
             else
             {

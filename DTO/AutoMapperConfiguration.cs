@@ -7,6 +7,11 @@ namespace Shortha.DTO
     {
         public AutoMapperConfiguration()
         {
+            CreateMap<Url, CreatedUrl>().ForMember(dest => dest.Hash, source => source.MapFrom(
+
+                att => att.ShortHash
+                )).ReverseMap();
+
             CreateMap<Url, PublicUrlResponse>()
                 .ForMember(dest => dest.url, o => o.MapFrom(src => src.OriginalUrl));
             CreateMap<Url, UrlCreateRequest>()
