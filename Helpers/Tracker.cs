@@ -1,14 +1,18 @@
 ﻿using DeviceDetectorNET;
+using IPinfo;
 
 public class TrackerBuilder
 {
     private readonly DeviceDetector _deviceDetector;
     private readonly Tracker _tracker;
+    private readonly IPinfoClient _client;
 
-    public TrackerBuilder(string userAgent, string ipAddress)
+    public TrackerBuilder(string userAgent, string ipAddress, IPinfoClient client)
     {
         _deviceDetector = new DeviceDetector(userAgent);
         _deviceDetector.Parse();
+
+        _client = client;
 
         _tracker = new Tracker
         {
@@ -42,6 +46,26 @@ public class TrackerBuilder
         return this;
     }
 
+    public TrackerBuilder WithIpAddress()
+    {
+        if (_tracker.IpAddress != "Unknown")
+        {
+
+
+            var ipInfo = _client.IPApi.GetDetails(_tracker.IpAddress);
+            if (ipInfo != null)
+            {
+                _tracker.IpAddress = ipInfo.IP;
+                _tracker.Country = ipInfo.Country;
+                _tracker.Region = ipInfo.Region;
+                _tracker.City = ipInfo.City;
+            }
+        }
+
+        return this;
+
+    }
+
     public Tracker Build()
     {
         return _tracker;
@@ -58,6 +82,10 @@ public class Tracker
     public string UserAgent { get; set; }
 
     private string _ipAddress;
+    public string Country { get; set; }
+    public string Region { get; set; }
+    public string City { get; set; }
+
     public string IpAddress
     {
         get

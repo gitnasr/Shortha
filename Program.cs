@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using IPinfo;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -25,8 +26,17 @@ namespace Shortha
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
                 .EnableDetailedErrors()
                 .EnableSensitiveDataLogging());
-               
+
             builder.Services.AddScoped<IURL, UrlRepository>();
+
+            builder.Services.AddScoped(provider =>
+            {
+                string token = "5b9b5c5ca0844a";
+                return new IPinfoClient.Builder()
+                    .AccessToken(token)
+                    .Build();
+            });
+
             builder.Services.AddAutoMapper(typeof(AutoMapperConfiguration));
             builder.Services.AddIdentity<AppUser, IdentityRole>(
                 options =>

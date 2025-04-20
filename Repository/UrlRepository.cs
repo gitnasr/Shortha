@@ -16,7 +16,7 @@ namespace Shortha.Repository
         }
         public Url? GetUrl(string url)
         {
-          return AppDB.Urls.FirstOrDefault(x => x.OriginalUrl == url);
+            return AppDB.Urls.FirstOrDefault(x => x.OriginalUrl == url);
 
         }
         public Url? GetUrlById(Guid id)
@@ -42,13 +42,13 @@ namespace Shortha.Repository
 
         public Url CreateUrl(Url url)
         {
-            ShortHash hashServiec = new();
-            string urlHash = hashServiec.GenerateHash(url.OriginalUrl);
+            ShortHash hashService = new();
+            string urlHash = hashService.GenerateHash(url.OriginalUrl);
 
-            // Check if the hash already exists: 1/10000 Propability of collision, but we can handle it
-            while (this.AppDB.Urls.Any(x => x.ShortHash == urlHash))
+            // Check if the hash already exists: 1/10000 Probability of collision, but we can handle it
+            while (AppDB.Urls.Any(x => x.ShortHash == urlHash))
             {
-                urlHash = hashServiec.GenerateHash(url.OriginalUrl);
+                urlHash = hashService.GenerateHash(url.OriginalUrl);
             }
 
             url.ShortHash = urlHash;
@@ -58,5 +58,5 @@ namespace Shortha.Repository
             return url;
         }
     }
-  
+
 }

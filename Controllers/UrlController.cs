@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using IPinfo;
 using Microsoft.AspNetCore.Mvc;
 using Shortha.DTO;
 using Shortha.Interfaces;
@@ -12,11 +13,12 @@ namespace Shortha.Controllers
     {
         private readonly IURL UrlRepo;
         private readonly IMapper Mapper;
-
-        public UrlController(IURL _url, IMapper mapper)
+        private readonly IPinfoClient client;
+        public UrlController(IURL _url, IMapper mapper, IPinfoClient client)
         {
             UrlRepo = _url;
             Mapper = mapper;
+            this.client = client;
         }
         [HttpPost]
         public IActionResult CreateNew([FromBody] UrlCreateRequest SubmittedURL)
@@ -35,7 +37,7 @@ namespace Shortha.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetUrlByHashAsync([FromBody] GetUrlFromHashRequest SubmittedHash)
+        public async Task<IActionResult> GetUrlByHashAsync([FromBody] GetUrlFromHashRequest SubmittedHash)
         {
             Url? url = UrlRepo.GetUrlByShortUrl(SubmittedHash.hash);
             if (url != null)
@@ -46,9 +48,12 @@ namespace Shortha.Controllers
                 {
                     return BadRequest();
                 }
-                var Builder = new TrackerBuilder(userAgent, ipAddress);
+                var Builder = new TrackerBuilder(userAgent, ipAddress, client);
 
-                Tracker t = Builder.WithBrowser().WithOs().WithBrand().WithModel().Build();
+                Tracker t = Builder.WithBrowser().WithOs().WithBrand().WithModel()
+                    .WithIpAddress()
+                    .Build();
+
 
 
 
@@ -60,7 +65,7 @@ namespace Shortha.Controllers
                 //Mapper.Map<PublicUrlResponse>(url)
                 return Ok(new
                 {
-                    t
+                    t,
                 });
 
             }
