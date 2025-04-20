@@ -37,7 +37,7 @@ namespace Shortha.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetUrlByHashAsync([FromBody] GetUrlFromHashRequest SubmittedHash)
+        public IActionResult GetUrlByHash([FromQuery] GetUrlFromHashRequest SubmittedHash)
         {
             Url? url = UrlRepo.GetUrlByShortUrl(SubmittedHash.hash);
             if (url != null)
@@ -55,18 +55,7 @@ namespace Shortha.Controllers
                     .Build();
 
 
-
-
-
-
-
-
-                // Register a Visit
-                //Mapper.Map<PublicUrlResponse>(url)
-                return Ok(new
-                {
-                    t,
-                });
+                return Ok(Mapper.Map<PublicUrlResponse>(url));
 
             }
             else
