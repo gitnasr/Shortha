@@ -8,5 +8,9 @@ namespace Shortha.DTO
         [MaxLength(10, ErrorMessage = "Hash length must be 10 characters.")]
         [MinLength(3, ErrorMessage = "Hash length must be 3 characters.")]
         public string hash { get; set; }
+
+        [Required(ErrorMessage = "Bad Request :( ", AllowEmptyStrings = false)]
+
+        public string fingerprint { get; set; } = string.Empty;
     }
 }

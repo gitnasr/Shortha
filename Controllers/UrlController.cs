@@ -39,6 +39,10 @@ namespace Shortha.Controllers
         [HttpGet]
         public IActionResult GetUrlByHash([FromQuery] GetUrlFromHashRequest SubmittedHash)
         {
+            if (SubmittedHash.fingerprint == null || SubmittedHash.fingerprint == string.Empty)
+            {
+                return BadRequest("Bad Request");
+            }
             Url? url = UrlRepo.GetUrlByShortUrl(SubmittedHash.hash);
             if (url != null)
             {
