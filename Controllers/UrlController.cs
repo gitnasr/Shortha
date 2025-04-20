@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Shortha.DTO;
-using Shortha.Helpers;
 using Shortha.Interfaces;
 using Shortha.Models;
 
@@ -47,9 +46,12 @@ namespace Shortha.Controllers
                 {
                     return BadRequest();
                 }
-                Tracker t = new Tracker(userAgent);
-                string browser = t.GetBrowser();
-                string os = t.GetOs();
+                var Builder = new TrackerBuilder(userAgent, ipAddress);
+
+                Tracker t = Builder.WithBrowser().WithOs().WithBrand().WithModel().Build();
+
+
+
 
 
 
@@ -58,12 +60,7 @@ namespace Shortha.Controllers
                 //Mapper.Map<PublicUrlResponse>(url)
                 return Ok(new
                 {
-
-                    Browser = browser,
-                    OS = os,
-                    IPAddress = ipAddress,
-                    Device = t.GetDevice(),
-                    A = t.GetBrand()
+                    t
                 });
 
             }

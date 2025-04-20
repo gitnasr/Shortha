@@ -10,7 +10,8 @@
         public string? Country { get; set; } = null;
         public string? Region { get; set; } = null;
         public string? City { get; set; } = null;
-        public string? Device { get; set; } = null;
+        public string? DeviceBrand { get; set; } = null;
+        public string? DeviceType { get; set; } = null;
         public string? Browser { get; set; } = null;
         public string? Os { get; set; } = null;
         public Guid UrlId { get; set; } // Foreign key to the URL

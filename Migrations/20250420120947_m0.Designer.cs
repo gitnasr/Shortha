@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Shortha.Models;
 
@@ -11,9 +12,11 @@ using Shortha.Models;
 namespace Shortha.Migrations
 {
     [DbContext(typeof(AppDB))]
-    partial class AppDBModelSnapshot : ModelSnapshot
+    [Migration("20250420120947_m0")]
+    partial class m0
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

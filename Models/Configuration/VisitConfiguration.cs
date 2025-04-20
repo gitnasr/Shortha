@@ -15,7 +15,8 @@ namespace Shortha.Models.Configuration
             builder.Property(v => v.Country).IsRequired(false);
             builder.Property(v => v.Region).IsRequired(false);
             builder.Property(v => v.City).IsRequired(false);
-            builder.Property(v => v.Device).IsRequired(false);
+            builder.Property(v => v.DeviceBrand).IsRequired(false);
+            builder.Property(v => v.DeviceType).IsRequired(false);
             builder.Property(v => v.Browser).IsRequired(false);
             builder.Property(v => v.Os).IsRequired(false);
             builder.Property(v => v.Count).IsRequired().HasDefaultValue(0);

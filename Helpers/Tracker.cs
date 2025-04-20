@@ -1,49 +1,76 @@
 ﻿using DeviceDetectorNET;
-using DeviceDetectorNET.Results;
 
-namespace Shortha.Helpers
+public class TrackerBuilder
 {
-    public class Tracker
+    private readonly DeviceDetector _deviceDetector;
+    private readonly Tracker _tracker;
+
+    public TrackerBuilder(string userAgent, string ipAddress)
     {
+        _deviceDetector = new DeviceDetector(userAgent);
+        _deviceDetector.Parse();
 
-        private readonly DeviceDetector _deviceDetector;
-        public Tracker(string userAgent)
+        _tracker = new Tracker
         {
-            _deviceDetector = new DeviceDetector(userAgent);
-            _deviceDetector.Parse();
-        }
+            UserAgent = userAgent
 
-        public string GetBrowser()
-        {
-            var r = _deviceDetector.GetClient();
-            return r.Match.Name;
-        }
-        public string GetOs()
-        {
-            var r = _deviceDetector.GetOs();
-            return r.Match.Name;
-        }
+        };
+    }
 
-        public string GetDevice()
-        {
-            var r = _deviceDetector.GetDeviceName();
-            return r;
-        }
+    public TrackerBuilder WithBrowser()
+    {
+        _tracker.BrowserName = _deviceDetector.GetClient().Match.Name;
+        _tracker.BrowserVersion = _deviceDetector.GetClient().Match.Version;
+        return this;
+    }
 
-        public string GetBrand()
+    public TrackerBuilder WithOs()
+    {
+        _tracker.OSName = _deviceDetector.GetOs().Match.Name;
+        return this;
+    }
+
+    public TrackerBuilder WithBrand()
+    {
+        _tracker.DeviceBrand = _deviceDetector.GetBrandName();
+        return this;
+    }
+
+    public TrackerBuilder WithModel()
+    {
+        _tracker.DeviceType = _deviceDetector.GetModel();
+        return this;
+    }
+
+    public Tracker Build()
+    {
+        return _tracker;
+    }
+}
+
+public class Tracker
+{
+    public string BrowserName { get; set; }
+    public string BrowserVersion { get; set; }
+    public string OSName { get; set; }
+    public string DeviceBrand { get; set; }
+    public string DeviceType { get; set; }
+    public string UserAgent { get; set; }
+
+    private string _ipAddress;
+    public string IpAddress
+    {
+        get
         {
-            var r = _deviceDetector.GetBrandName();
-            return r;
+            if (string.IsNullOrEmpty(_ipAddress) || _ipAddress == "::1")
+            {
+                return "Unknown";
+            }
+            return _ipAddress;
         }
-        public string GetModel()
+        set
         {
-            var r = _deviceDetector.GetModel();
-            return r;
-        }
-        public string GetVersion()
-        {
-            var r = _deviceDetector.GetClient();
-            return r.Match.Version;
+            _ipAddress = value;
         }
     }
 }
