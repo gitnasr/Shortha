@@ -40,23 +40,36 @@ namespace Shortha.Repository
                 .ToListAsync();
         }
 
-        public Url CreateUrl(Url url)
+        public Url CreateUrl(Url url, string? customHash = null)
         {
-            ShortHash hashService = new();
-            string urlHash = hashService.GenerateHash(url.OriginalUrl);
-
-            // Check if the hash already exists: 1/10000 Probability of collision, but we can handle it
-            while (AppDB.Urls.Any(x => x.ShortHash == urlHash))
+            if (customHash == null)
             {
-                urlHash = hashService.GenerateHash(url.OriginalUrl);
-            }
 
-            url.ShortHash = urlHash;
+                ShortHash hashService = new();
+                string urlHash = hashService.GenerateHash(url.OriginalUrl);
+
+                // Check if the hash already exists: 1/10000 Probability of collision, but we can handle it
+                while (AppDB.Urls.Any(x => x.ShortHash == urlHash))
+                {
+                    urlHash = hashService.GenerateHash(url.OriginalUrl);
+                }
+
+                url.ShortHash = urlHash;
+            }
 
             this.AppDB.Urls.Add(url);
             this.AppDB.SaveChanges();
             return url;
         }
+
+
+
+        public bool IsHashExists(string hash)
+        {
+            return AppDB.Urls.Any(x => x.ShortHash == hash);
+        }
+
+
     }
 
 }

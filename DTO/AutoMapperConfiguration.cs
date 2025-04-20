@@ -11,6 +11,11 @@ namespace Shortha.DTO
 
                 att => att.ShortHash
                 )).ReverseMap();
+            CreateMap<Url, CreateCustomUrlRequest>()
+                .ForMember(src => src.custom, options => options.MapFrom(dest => dest.ShortHash))
+                .ForMember(src => src.Url, options => options.MapFrom(dest => dest.OriginalUrl))
+                .ReverseMap();
+
 
             CreateMap<Url, PublicUrlResponse>()
                 .ForMember(dest => dest.url, o => o.MapFrom(src => src.OriginalUrl));

@@ -4,6 +4,7 @@ using Shortha.DTO;
 using Shortha.Filters;
 using Shortha.Interfaces;
 using Shortha.Models;
+using System.Net;
 
 namespace Shortha.Controllers
 {
@@ -50,7 +51,7 @@ namespace Shortha.Controllers
                 bool vist = VisitsRepo.CreateVisit(tracker, url.Id);
                 if (!vist)
                 {
-                    return StatusCode(500, new ErrorResponse(System.Net.HttpStatusCode.InternalServerError, "Somethin went error"));
+                    return StatusCode(500, new ErrorResponse(HttpStatusCode.InternalServerError, "Somethin went error"));
                 }
 
                 return Ok(Mapper.Map<PublicUrlResponse>(url));
@@ -58,8 +59,26 @@ namespace Shortha.Controllers
             }
             else
             {
-                return NotFound(new ErrorResponse(System.Net.HttpStatusCode.NotFound, "URL is Deleted or Not Found"));
+                return NotFound(new ErrorResponse(HttpStatusCode.NotFound, "URL is Deleted or Not Found"));
             }
+        }
+
+        [HttpPost("custom")]
+        public IActionResult CreateWithCustomHash([FromBody] CreateCustomUrlRequest createCustomUrlRequest)
+        {
+            // check if hash is not found
+            bool isExisted = UrlRepo.IsHashExists(createCustomUrlRequest.custom);
+            if (isExisted)
+            {
+                return BadRequest(new ErrorResponse(HttpStatusCode.BadRequest, "Hash already exists"));
+            }
+            else
+            {
+                Url url = UrlRepo.CreateUrl(Mapper.Map<Url>(createCustomUrlRequest), createCustomUrlRequest.custom);
+                CreatedUrl CreatedURL = Mapper.Map<CreatedUrl>(url);
+                return Ok(CreatedURL);
+            }
+
         }
     }
 }

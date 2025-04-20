@@ -10,7 +10,8 @@ namespace Shortha.Interfaces
         public Task<IEnumerable<Url>>? GetUrlsByUserId(string userId);
         public Task<IEnumerable<Url>>? GetUrlsByUserId(string userId, int pageNumber, int pageSize);
 
-        public Url CreateUrl(Url url);
+        public Url CreateUrl(Url url, string? customHash = null);
+        public bool IsHashExists(string hash);
 
 
     }
