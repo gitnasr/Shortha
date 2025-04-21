@@ -51,9 +51,11 @@ namespace Shortha.Repository
 
         }
 
-        public Task<IEnumerable<Visit>>? GetVisitsByUserId(string userId)
+        public async Task<IEnumerable<Visit>>? GetVisitsByUserId(string userId)
         {
-            throw new NotImplementedException();
+            return await _dbContext.Visits
+                .Include(v => v.Url)
+                .Where(v => v.Url.UserId == userId).ToListAsync();
         }
     }
 }

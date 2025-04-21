@@ -48,8 +48,8 @@ namespace Shortha.Repository
                 ShortHash hashService = new();
                 string urlHash = hashService.GenerateHash(url.OriginalUrl);
 
-                // Check if the hash already exists: 1/10000 Probability of collision, but we can handle it
-                while (AppDB.Urls.Any(x => x.ShortHash == urlHash))
+                // Check if the hash already exists: 1/300,000 Probability of collision, but we can handle it
+                while (IsHashExists(urlHash))
                 {
                     urlHash = hashService.GenerateHash(url.OriginalUrl);
                 }
