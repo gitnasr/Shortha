@@ -16,6 +16,8 @@ namespace Shortha.DTO
                 .ForMember(src => src.Url, options => options.MapFrom(dest => dest.OriginalUrl))
                 .ReverseMap();
 
+            CreateMap<Visit, UrlVisitsResponse>().ReverseMap();
+
 
             CreateMap<Url, PublicUrlResponse>()
                 .ForMember(dest => dest.url, o => o.MapFrom(src => src.OriginalUrl));
