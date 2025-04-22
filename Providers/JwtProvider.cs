@@ -43,13 +43,44 @@ namespace Shortha.Providers
             return token;
         }
 
-        public string BlacklistToken(string token)
+        public async Task<string> BlacklistToken(string token)
         {
 
             var tokenHandler = new JsonWebTokenHandler();
+
+
+            // Check first if the token is valid, i don't want spammy requests to my redis server. -_-
+
+            bool isValid = tokenHandler.CanReadToken(token);
+            if (!isValid)
+            {
+                throw new Exception("Token is not valid");
+            }
+
+            // If the token is valid, then we need to check if it's already expired.
+           var ValidationResult = await tokenHandler.ValidateTokenAsync(token, new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Secret"])),
+                ValidateIssuer = true,
+                ValidIssuer = _configuration["Jwt:Issuer"],
+                ValidateAudience = true,
+                ValidAudience = _configuration["Jwt:Audience"],
+                ValidateLifetime = true,
+               ClockSkew = TimeSpan.Zero
+           }); // This should be got from the configuration
+
+            if (!ValidationResult.IsValid)
+            {
+                throw new Exception("Token is expired");
+            }
+
+
+
             var TokenPayload = tokenHandler.ReadJsonWebToken(token);
             var tokenId = TokenPayload.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti)?.Value;
             var tokenExpiresIn = TokenPayload.ValidTo;
+
             var expiresAtInTimeSpan = tokenExpiresIn - DateTime.UtcNow;
             if (tokenId != null)
             {

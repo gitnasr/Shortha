@@ -29,10 +29,10 @@ namespace Shortha.Controllers
             _tokenProvider = jwtProvider;
         }
         [HttpPost("logout")]
-        public IActionResult Logout([FromBody] LogoutRequestPayload logoutRequest)
+        public async Task<IActionResult> Logout([FromBody] LogoutRequestPayload logoutRequest)
         {
             // Invalidate the Token
-            _tokenProvider.BlacklistToken(logoutRequest.Token);
+           await _tokenProvider.BlacklistToken(logoutRequest.Token);
             return Ok(new { Message = "Logout successful." });
         }
         [HttpPost("login")]
