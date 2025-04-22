@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shortha.DTO;
 using Shortha.Interfaces;
@@ -22,7 +21,7 @@ namespace Shortha.Controllers
         [HttpGet("{shortUrl}")]
         public async Task<IActionResult> GetVisitsByShortUrl(string shortUrl)
         {
-            var visits = await _visitRepository.GetVisitsByShortUrl(shortUrl) ;
+            var visits = await _visitRepository.GetVisitsByShortUrl(shortUrl);
             if (visits == null || !visits.Any())
             {
                 return NotFound(
@@ -31,10 +30,7 @@ namespace Shortha.Controllers
                         "No visits found for the provided short URL."
                     ));
             }
-            return Ok(
-
-                visits.Select(v => mapper.Map<UrlVisitsResponse>(v))
-                );
+            return Ok(visits.Select(v => mapper.Map<UrlVisitsResponse>(v)));
         }
     }
 }
