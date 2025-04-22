@@ -7,6 +7,7 @@ namespace Shortha.DTO
     {
         public AutoMapperConfiguration()
         {
+            CreateMap<AppUser, RegisterRequest>().ReverseMap();
             CreateMap<Url, CreatedUrl>().ForMember(dest => dest.Hash, source => source.MapFrom(
 
                 att => att.ShortHash

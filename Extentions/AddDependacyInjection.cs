@@ -1,5 +1,6 @@
 ﻿using Shortha.Filters;
 using Shortha.Interfaces;
+using Shortha.Models;
 using Shortha.Repository;
 
 namespace Shortha.Extentions
@@ -11,6 +12,7 @@ namespace Shortha.Extentions
             services.AddScoped<IURL, UrlRepository>();
             services.AddScoped<IVisit, VisitRepository>();
             services.AddScoped<GetUrlValidation>();
+            services.AddScoped<AppUser, AppUser>(); //TEMP
             return services;
         }
     }

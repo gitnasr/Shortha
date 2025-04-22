@@ -28,6 +28,8 @@ namespace Shortha
 
             builder.Services.AddAppIdentity(config);
             builder.Services.AddDependencyInjection();
+            
+
             builder.Services.AddIpTracker();
             builder.Services.AddAutoMapper(typeof(AutoMapperConfiguration));
             builder.Services.AddErrorTransformer();
@@ -37,11 +39,9 @@ namespace Shortha
                 .EnableDetailedErrors()
                 .EnableSensitiveDataLogging());
 
-           
-           
+         
+            builder.Services.AddValidation();
 
-
-        
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
