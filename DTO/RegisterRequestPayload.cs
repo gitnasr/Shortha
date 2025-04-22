@@ -5,7 +5,7 @@ namespace Shortha.DTO
 {
     // Data annotations are used for validation but it makes the code missy
     // Using the Validation Fluent library would be better
-    public class RegisterRequest
+    public class RegisterRequestPayload
     {
       
         public string Username { get; set; }
@@ -14,7 +14,7 @@ namespace Shortha.DTO
         public string ConfirmPassword { get; set; }
 
     }
-    public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
+    public class RegisterRequestValidator : AbstractValidator<RegisterRequestPayload>
     {
         public RegisterRequestValidator()
         {

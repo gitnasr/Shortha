@@ -1,10 +1,13 @@
-﻿using AutoMapper;
+﻿using System.Net;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Shortha.DTO;
 using Shortha.Interfaces;
 using Shortha.Models;
+using Shortha.Providers;
 
 namespace Shortha.Controllers
 {
@@ -12,19 +15,42 @@ namespace Shortha.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly AppUser _user;
+        private readonly JwtProvider _tokenProvider;
         private readonly IMapper _mapper;
 
         private readonly UserManager<AppUser> _userManager; 
 
 
-        public UserController(AppUser user, IMapper mapper, UserManager<AppUser> _manager)
+        public UserController( IMapper mapper, UserManager<AppUser> _manager,
+            JwtProvider jwtProvider)
         {
-            _user = user;
             _mapper = mapper;
             _userManager = _manager;
+            _tokenProvider = jwtProvider;
         }
-
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequestPayload loginRequest)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByNameAsync(loginRequest.Username);
+                if (user != null && await _userManager.CheckPasswordAsync(user, loginRequest.Password))
+                {
+                    // Generate JWT token
+                    var token = _tokenProvider.GenerateToken(user);
+                    // Return token in response
+                    return Ok(new { Message = "Login successful.", Token = token });
+                }
+                else
+                {
+                    return Unauthorized(new ErrorResponse(HttpStatusCode.Unauthorized,"Invalid Email or Password has been Provided!"));
+                }
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest registerRequest)
         {
@@ -34,7 +60,10 @@ namespace Shortha.Controllers
                 var result = await _userManager.CreateAsync(user, registerRequest.Password);
                 if (result.Succeeded)
                 {
-                    return Ok(new { Message = "User registered successfully." });
+                    // Generate JWT token
+                    var token = _tokenProvider.GenerateToken(user);
+                    // Return token in response
+                    return Ok(new { Message = "User registered successfully.", Token= token });
                 }
                 else
                 {

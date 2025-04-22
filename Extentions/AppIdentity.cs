@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Shortha.Models;
+using Shortha.Providers;
 using System.Text;
 
 namespace Shortha.Extentions
@@ -59,7 +60,7 @@ namespace Shortha.Extentions
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Secret"])),
                 };
             });
-
+            services.AddSingleton< JwtProvider , JwtProvider >();
             return services;
 
         }
