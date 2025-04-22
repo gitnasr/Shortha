@@ -9,9 +9,11 @@ namespace Shortha.Providers
     public class JwtProvider
     {
         private readonly IConfiguration _configuration;
-        public JwtProvider(IConfiguration configuration)
+        private readonly RedisProvider redis;
+        public JwtProvider(IConfiguration configuration, RedisProvider _redis)
         {
             _configuration = configuration;
+            redis = _redis;
 
         }
 
@@ -34,12 +36,48 @@ namespace Shortha.Providers
                 SigningCredentials = credentials,
                 Issuer = _configuration["Jwt:Issuer"],
                 Audience = _configuration["Jwt:Audience"],
-                
+
             };
             var handler = new JsonWebTokenHandler();
-         var token =    handler.CreateToken(tokenDescriptor);
+            var token = handler.CreateToken(tokenDescriptor);
             return token;
         }
+
+        public string BlacklistToken(string token)
+        {
+
+            var tokenHandler = new JsonWebTokenHandler();
+            var TokenPayload = tokenHandler.ReadJsonWebToken(token);
+            var tokenId = TokenPayload.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti)?.Value;
+            var tokenExpiresIn = TokenPayload.ValidTo;
+            var expiresAtInTimeSpan = tokenExpiresIn - DateTime.UtcNow;
+            if (tokenId != null)
+            {
+                redis.SetValue(tokenId, token, expiresAtInTimeSpan);
+            }
+            else
+            {
+                throw new Exception("Token ID not found");
+            }
+
+            return token;
+        }
+
+        public bool IsBlacklisted(string tokenId)
+        {
+            
+                var blacklistedToken = redis.GetValue(tokenId);
+                if (blacklistedToken != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            
+           
+        }
+
     }
-   
 }

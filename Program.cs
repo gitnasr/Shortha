@@ -1,5 +1,6 @@
 ﻿using IPinfo;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -39,7 +40,14 @@ namespace Shortha
                 .EnableDetailedErrors()
                 .EnableSensitiveDataLogging());
 
-         
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("NotBlacklisted", policy =>
+                    policy.Requirements.Add(new NotBlacklistedRequirement()));
+            });
+            builder.Services.AddSingleton<IAuthorizationHandler, NotBlacklistedHandler>();
+
+
             builder.Services.AddValidation();
 
             var app = builder.Build();

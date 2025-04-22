@@ -1,11 +1,13 @@
 ﻿using System.Net;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shortha.DTO;
 using Shortha.Interfaces;
 
 namespace Shortha.Controllers
 {
+    [Authorize(Policy = "NotBlacklisted")]
     [Route("api/visits")]
     [ApiController]
     public class VisitController : ControllerBase

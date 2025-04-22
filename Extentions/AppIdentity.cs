@@ -60,7 +60,8 @@ namespace Shortha.Extentions
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Secret"])),
                 };
             });
-            services.AddSingleton< JwtProvider , JwtProvider >();
+            services.AddSingleton<JwtProvider , JwtProvider>();
+            services.AddSingleton<RedisProvider, RedisProvider>(); //TEMP
             return services;
 
         }
