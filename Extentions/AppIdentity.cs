@@ -8,24 +8,38 @@ namespace Shortha.Extentions
 {
     public static class AppIdentity
     {
+        private static PasswordOptions PasswordResttictions { get; set; } = new PasswordOptions
+        {
+            RequireDigit = true,
+            RequiredLength = 6,
+            RequireLowercase = true,
+            RequireNonAlphanumeric = true,
+            RequireUppercase = true
+        };
+        private static SignInOptions SignInOptions { get; set; } = new SignInOptions
+        {
+            RequireConfirmedAccount = false,
+            RequireConfirmedEmail = false,
+            RequireConfirmedPhoneNumber = false
+        };
+        private static LockoutOptions LockoutOptions { get; set; } = new LockoutOptions
+        {
+            AllowedForNewUsers = true,
+            DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15),
+            MaxFailedAccessAttempts = 3
+        };
+
         public static IServiceCollection AddAppIdentity(this IServiceCollection services, IConfiguration config) {
 
             services.AddIdentity<AppUser, IdentityRole>(
                 options =>
                 {
-                    options.User.RequireUniqueEmail = false;
-                    options.Password.RequireDigit = true;
-                    options.Password.RequiredLength = 6;
-                    options.Password.RequireLowercase = true;
-                    options.Password.RequireNonAlphanumeric = false;
-                    options.Password.RequireUppercase = true;
-                    options.SignIn.RequireConfirmedAccount = false;
-                    options.SignIn.RequireConfirmedEmail = false;
-                    options.SignIn.RequireConfirmedPhoneNumber = false;
-                    options.Lockout.AllowedForNewUsers = true;
-                    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
-                    options.Lockout.MaxFailedAccessAttempts = 3;
-                })
+                    options.User.RequireUniqueEmail = true;
+
+                    options.Password = PasswordResttictions;
+                    options.SignIn=SignInOptions;
+                    options.Lockout = LockoutOptions;
+                    })
                 .AddEntityFrameworkStores<AppDB>();
             services.AddAuthentication(options =>
             {
