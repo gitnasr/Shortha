@@ -2,7 +2,13 @@
 
 namespace Shortha.Providers
 {
-    public class RedisProvider
+    public interface IRedisProvider
+    {
+        void SetValue(string key, string value);
+        void SetValue(string key, string value, TimeSpan expireTime);
+        string? GetValue(string key);
+    }
+    public class RedisProvider: IRedisProvider
     {
         private readonly ConnectionMultiplexer redis;
         public RedisProvider()

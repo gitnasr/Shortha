@@ -69,8 +69,6 @@ namespace Shortha.Extentions
             {
                 options.TokenValidationParameters = GetTokenValidationParameters(config) ;
             });
-            services.AddSingleton<JwtProvider , JwtProvider>();
-            services.AddSingleton<RedisProvider, RedisProvider>(); //TEMP
 
 
             services.AddAuthorization(options =>

@@ -2,6 +2,7 @@
 using System.Text;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using Shortha.Extentions;
 using Shortha.Models;
 
 namespace Shortha.Providers
@@ -58,35 +59,24 @@ namespace Shortha.Providers
             }
 
             // If the token is valid, then we need to check if it's already expired.
-           var ValidationResult = await tokenHandler.ValidateTokenAsync(token, new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Secret"])),
-                ValidateIssuer = true,
-                ValidIssuer = _configuration["Jwt:Issuer"],
-                ValidateAudience = true,
-                ValidAudience = _configuration["Jwt:Audience"],
-                ValidateLifetime = true,
-               ClockSkew = TimeSpan.Zero
-           }); // This should be got from the configuration
+           var ValidationResult = await tokenHandler.ValidateTokenAsync(token,
+               AppIdentity.GetTokenValidationParameters(_configuration)
+               );
 
-            if (!ValidationResult.IsValid)
+            if (ValidationResult.IsValid)
             {
-                return ;
+
+
+                var TokenPayload = tokenHandler.ReadJsonWebToken(token);
+                var tokenId = TokenPayload.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti)?.Value;
+                var tokenExpiresIn = TokenPayload.ValidTo;
+
+                var expiresAtInTimeSpan = tokenExpiresIn - DateTime.UtcNow;
+                if (tokenId != null)
+                {
+                    redis.SetValue(tokenId, token, expiresAtInTimeSpan);
+                }
             }
-
-
-
-            var TokenPayload = tokenHandler.ReadJsonWebToken(token);
-            var tokenId = TokenPayload.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti)?.Value;
-            var tokenExpiresIn = TokenPayload.ValidTo;
-
-            var expiresAtInTimeSpan = tokenExpiresIn - DateTime.UtcNow;
-            if (tokenId != null)
-            {
-                redis.SetValue(tokenId, token, expiresAtInTimeSpan);
-            }
-          
 
             
         }

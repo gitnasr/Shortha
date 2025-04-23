@@ -2,6 +2,7 @@
 using Shortha.Filters;
 using Shortha.Interfaces;
 using Shortha.Models;
+using Shortha.Providers;
 using Shortha.Repository;
 
 namespace Shortha.Extentions
@@ -15,6 +16,8 @@ namespace Shortha.Extentions
             services.AddScoped<GetUrlValidation>();
             services.AddScoped<AppUser, AppUser>(); //TEMP
             services.AddSingleton<IAuthorizationHandler, NotBlacklistedHandler>();
+            services.AddSingleton<JwtProvider, JwtProvider>();
+            services.AddSingleton<IRedisProvider, RedisProvider>(); 
 
             return services;
         }
