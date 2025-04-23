@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using Shortha.Filters;
 using Shortha.Models;
 using Shortha.Providers;
 using System.Text;
@@ -30,6 +31,23 @@ namespace Shortha.Extentions
             MaxFailedAccessAttempts = 3
         };
 
+     
+        public static TokenValidationParameters GetTokenValidationParameters(IConfiguration config)
+        {
+            return new TokenValidationParameters
+            {
+                ClockSkew = TimeSpan.Zero,
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = config["Jwt:Issuer"],
+                ValidAudience = config["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Secret"]))
+            };
+        }
+
+
         public static IServiceCollection AddAppIdentity(this IServiceCollection services, IConfiguration config) {
 
             services.AddIdentity<AppUser, IdentityRole>(
@@ -49,21 +67,20 @@ namespace Shortha.Extentions
                 options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(options =>
             {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ClockSkew = TimeSpan.Zero
-                    ,
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = config["Jwt:Issuer"],
-                    ValidAudience = config["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Secret"])),
-                };
+                options.TokenValidationParameters = GetTokenValidationParameters(config) ;
             });
             services.AddSingleton<JwtProvider , JwtProvider>();
             services.AddSingleton<RedisProvider, RedisProvider>(); //TEMP
+
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("NotBlacklisted", policy =>
+                    policy.Requirements.Add(new NotBlacklistedRequirement()));
+
+                options.DefaultPolicy = options.GetPolicy("NotBlacklisted")!;
+            });
+
             return services;
 
         }

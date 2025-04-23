@@ -40,13 +40,6 @@ namespace Shortha
                 .EnableDetailedErrors()
                 .EnableSensitiveDataLogging());
 
-            builder.Services.AddAuthorization(options =>
-            {
-                options.AddPolicy("NotBlacklisted", policy =>
-                    policy.Requirements.Add(new NotBlacklistedRequirement()));
-            });
-            builder.Services.AddSingleton<IAuthorizationHandler, NotBlacklistedHandler>();
-
 
             builder.Services.AddValidation();
 

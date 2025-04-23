@@ -7,7 +7,7 @@ using Shortha.Interfaces;
 
 namespace Shortha.Controllers
 {
-    [Authorize(Policy = "NotBlacklisted")]
+    [Authorize]
     [Route("api/visits")]
     [ApiController]
     public class VisitController : ControllerBase

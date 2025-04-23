@@ -1,4 +1,5 @@
-﻿using Shortha.Filters;
+﻿using Microsoft.AspNetCore.Authorization;
+using Shortha.Filters;
 using Shortha.Interfaces;
 using Shortha.Models;
 using Shortha.Repository;
@@ -13,6 +14,8 @@ namespace Shortha.Extentions
             services.AddScoped<IVisit, VisitRepository>();
             services.AddScoped<GetUrlValidation>();
             services.AddScoped<AppUser, AppUser>(); //TEMP
+            services.AddSingleton<IAuthorizationHandler, NotBlacklistedHandler>();
+
             return services;
         }
     }
