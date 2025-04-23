@@ -10,8 +10,8 @@ namespace Shortha.Providers
     public class JwtProvider
     {
         private readonly IConfiguration _configuration;
-        private readonly RedisProvider redis;
-        public JwtProvider(IConfiguration configuration, RedisProvider _redis)
+        private readonly IRedisProvider redis;
+        public JwtProvider(IConfiguration configuration, IRedisProvider _redis)
         {
             _configuration = configuration;
             redis = _redis;

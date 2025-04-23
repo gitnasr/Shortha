@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using Shortha.DTO;
 using Shortha.Extentions;
 using Shortha.Filters;
+using Shortha.Helpers;
 using Shortha.Interfaces;
 using Shortha.Middlewares;
 using Shortha.Models;
@@ -18,7 +19,7 @@ namespace Shortha
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static  async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
             var config = builder.Configuration;
@@ -26,9 +27,9 @@ namespace Shortha
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
+            builder.Services.AddDependencyInjection();
 
             builder.Services.AddAppIdentity(config);
-            builder.Services.AddDependencyInjection();
             
 
             builder.Services.AddIpTracker();
@@ -58,7 +59,11 @@ namespace Shortha
 
 
             app.MapControllers();
-
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                await DbSeeder.SeedRolesAsync(services); // call your seed function
+            }
             app.Run();
         }
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Shortha.Helpers;
 using Shortha.Interfaces;
 using Shortha.Models;
@@ -39,7 +40,7 @@ namespace Shortha.Repository
                 .Take(pageSize)
                 .ToListAsync();
         }
-
+        [AllowAnonymous]
         public Url CreateUrl(Url url, string? customHash = null)
         {
             if (customHash == null)

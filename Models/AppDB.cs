@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Shortha.Models.Configuration;
 
@@ -13,6 +14,8 @@ namespace Shortha.Models
         public AppDB(DbContextOptions<AppDB> options) : base(options)
         {
         }
+      
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new UrlConfiguration());
