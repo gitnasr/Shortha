@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shortha.DTO;
 using Shortha.Filters;
@@ -22,6 +23,7 @@ namespace Shortha.Controllers
             VisitsRepo = visitsRepo;
         }
         [HttpPost]
+        [AllowAnonymous]
         public IActionResult CreateNew([FromBody] UrlCreateRequest SubmittedURL)
         {
             if (ModelState.IsValid)
@@ -38,6 +40,7 @@ namespace Shortha.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [ServiceFilter(typeof(GetUrlValidation))]
         public IActionResult GetUrlByHash([FromQuery] GetUrlFromHashRequest SubmittedHash)
         {
@@ -64,6 +67,7 @@ namespace Shortha.Controllers
         }
 
         [HttpPost("custom")]
+        [Authorize(Roles = "Preimum,Admin")]
         public IActionResult CreateWithCustomHash([FromBody] CreateCustomUrlRequest createCustomUrlRequest)
         {
             // check if hash is not found

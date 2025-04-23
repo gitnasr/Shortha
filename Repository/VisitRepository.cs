@@ -47,7 +47,7 @@ namespace Shortha.Repository
         {
             return await _dbContext.Visits
                 .Include(v => v.Url)
-                 .Where(v => v.Url.ShortHash == shortUrl).ToListAsync();
+                .Where(v => v.Url.ShortHash == shortUrl).ToListAsync();
 
         }
 

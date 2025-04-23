@@ -1,9 +1,12 @@
 ﻿using System.Net;
+using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Shortha.DTO;
 using Shortha.Interfaces;
+using Shortha.Models;
 
 namespace Shortha.Controllers
 {
@@ -14,7 +17,7 @@ namespace Shortha.Controllers
     {
         private readonly IVisit _visitRepository;
         private readonly IMapper mapper;
-        public VisitController(IVisit visitRepository, IMapper mapper)
+        public VisitController(IVisit visitRepository, IMapper mapper )
         {
             _visitRepository = visitRepository;
             this.mapper = mapper;
@@ -23,15 +26,21 @@ namespace Shortha.Controllers
         [HttpGet("{shortUrl}")]
         public async Task<IActionResult> GetVisitsByShortUrl(string shortUrl)
         {
-            var visits = await _visitRepository.GetVisitsByShortUrl(shortUrl);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            IEnumerable<Visit>? visits = await _visitRepository.GetVisitsByShortUrl(shortUrl);
             if (visits == null || !visits.Any())
             {
-                return NotFound(
-                    new ErrorResponse(
-                        HttpStatusCode.NotFound,
-                        "No visits found for the provided short URL."
-                    ));
+
+                return Ok(new { Visits = Array.Empty<object>() });
+
             }
+            if (visits.Select(Visit => Visit.Url.UserId).First() != userId)
+            {
+                return Ok(new { Visits = Array.Empty<object>() });
+
+            }
+
+
             return Ok(visits.Select(v => mapper.Map<UrlVisitsResponse>(v)));
         }
     }

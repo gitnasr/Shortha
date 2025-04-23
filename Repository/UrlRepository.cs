@@ -40,7 +40,6 @@ namespace Shortha.Repository
                 .Take(pageSize)
                 .ToListAsync();
         }
-        [AllowAnonymous]
         public Url CreateUrl(Url url, string? customHash = null)
         {
             if (customHash == null)
