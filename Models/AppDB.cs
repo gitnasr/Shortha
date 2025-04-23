@@ -11,6 +11,11 @@ namespace Shortha.Models
         public DbSet<Url> Urls { get; set; } = null!;
         public DbSet<Visit> Visits { get; set; } = null!;
 
+        public DbSet<Payment> Payments { get; set; } = null!;
+        public DbSet<Subscription> Subscriptions { get; set; } = null!;
+
+        public DbSet<Package> Packages { get; set; } = null!;
+
         public AppDB(DbContextOptions<AppDB> options) : base(options)
         {
         }

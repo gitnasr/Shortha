@@ -62,7 +62,8 @@ namespace Shortha
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
-                await DbSeeder.SeedRolesAsync(services); // call your seed function
+                await DbSeeder.SeedRolesAsync(services);
+                await DbSeeder.SeedPackagesAsync(services);
             }
             app.Run();
         }

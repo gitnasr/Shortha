@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
@@ -12,6 +13,7 @@ using Shortha.Providers;
 namespace Shortha.Controllers
 {
     [Route("api/user")]
+    [Authorize]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -31,10 +33,11 @@ namespace Shortha.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout([FromBody] LogoutRequestPayload logoutRequest)
         {
-            // Invalidate the Token
+            // Invalidate the Token though the blacklist system.
             await _tokenProvider.BlacklistToken(logoutRequest.Token);
             return Ok();
         }
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestPayload loginRequest)
         {
@@ -71,6 +74,7 @@ namespace Shortha.Controllers
                 return BadRequest(ModelState);
             }
         }
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequestPayload registerRequest)
         {
@@ -98,6 +102,8 @@ namespace Shortha.Controllers
             }
         }
 
+
+        
 
     }
 }
