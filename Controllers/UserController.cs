@@ -43,8 +43,21 @@ namespace Shortha.Controllers
                 var user = await _userManager.FindByNameAsync(loginRequest.Username);
                 if (user != null && await _userManager.CheckPasswordAsync(user, loginRequest.Password))
                 {
+
+
+                    var RoleList = await _userManager.GetRolesAsync(user);
+                    if (RoleList.Count == 0)
+                    {
+                        return Unauthorized(new ErrorResponse(HttpStatusCode.Unauthorized, "User has no role assigned!"));
+                    }
+
+                    // Check the user role
+
+                    var userRole = RoleList.First();
+
                     // Generate JWT token
-                    var token = _tokenProvider.GenerateToken(user);
+
+                    var token = _tokenProvider.GenerateToken(user, userRole);
                     // Return token in response
                     return Ok(new { Message = "Login successful.", Token = token });
                 }
@@ -59,7 +72,7 @@ namespace Shortha.Controllers
             }
         }
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterRequest registerRequest)
+        public async Task<IActionResult> Register([FromBody] RegisterRequestPayload registerRequest)
         {
             if (ModelState.IsValid)
             {
@@ -67,8 +80,10 @@ namespace Shortha.Controllers
                 var result = await _userManager.CreateAsync(user, registerRequest.Password);
                 if (result.Succeeded)
                 {
+                    //Assgin Role to user
+                    await _userManager.AddToRoleAsync(user, "Normal");
                     // Generate JWT token
-                    var token = _tokenProvider.GenerateToken(user);
+                    var token = _tokenProvider.GenerateToken(user, "Normal");
                     // Return token in response
                     return Ok(new { Message = "User registered successfully.", Token= token });
                 }
