@@ -43,7 +43,7 @@ namespace Shortha.Providers
             return token;
         }
 
-        public async Task<string> BlacklistToken(string token)
+        public async Task BlacklistToken(string token)
         {
 
             var tokenHandler = new JsonWebTokenHandler();
@@ -54,7 +54,7 @@ namespace Shortha.Providers
             bool isValid = tokenHandler.CanReadToken(token);
             if (!isValid)
             {
-                throw new Exception("Token is not valid");
+                return;
             }
 
             // If the token is valid, then we need to check if it's already expired.
@@ -72,7 +72,7 @@ namespace Shortha.Providers
 
             if (!ValidationResult.IsValid)
             {
-                throw new Exception("Token is expired");
+                return ;
             }
 
 
@@ -86,12 +86,9 @@ namespace Shortha.Providers
             {
                 redis.SetValue(tokenId, token, expiresAtInTimeSpan);
             }
-            else
-            {
-                throw new Exception("Token ID not found");
-            }
+          
 
-            return token;
+            
         }
 
         public bool IsBlacklisted(string tokenId)

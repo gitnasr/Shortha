@@ -32,8 +32,8 @@ namespace Shortha.Controllers
         public async Task<IActionResult> Logout([FromBody] LogoutRequestPayload logoutRequest)
         {
             // Invalidate the Token
-           await _tokenProvider.BlacklistToken(logoutRequest.Token);
-            return Ok(new { Message = "Logout successful." });
+            await _tokenProvider.BlacklistToken(logoutRequest.Token);
+            return Ok();
         }
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestPayload loginRequest)
