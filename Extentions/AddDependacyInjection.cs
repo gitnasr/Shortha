@@ -13,6 +13,7 @@ namespace Shortha.Extentions
         {
             services.AddScoped<IURL, UrlRepository>();
             services.AddScoped<IVisit, VisitRepository>();
+            services.AddScoped<SubscriptionRepository, SubscriptionRepository>();
             services.AddScoped<GetUrlValidation>();
             services.AddScoped<IAppUser, AppUser>(); //TEMP
             services.AddSingleton<IAuthorizationHandler, NotBlacklistedHandler>();
