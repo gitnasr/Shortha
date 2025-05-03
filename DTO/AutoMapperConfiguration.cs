@@ -15,6 +15,7 @@ namespace Shortha.DTO
             CreateMap<Package, PackageInfo>();
 
 
+
             CreateMap<AppUser, RegisterRequestPayload>().ReverseMap();
             CreateMap<Url, CreatedUrl>().ForMember(dest => dest.Hash, source => source.MapFrom(
 

@@ -6,6 +6,7 @@ using Shortha.DTO;
 using Shortha.Interfaces;
 using Shortha.Models;
 using System.Net;
+using System.Security.Claims;
 
 namespace Shortha.Controllers
 {
@@ -16,13 +17,16 @@ namespace Shortha.Controllers
     {
         private readonly IJwtProvider _tokenProvider;
         private readonly IMapper _mapper;
-        private readonly SubscriptionRepository _subscriptionRepository;
+        private readonly ISubscriptionRepository _subscriptionRepository;
 
         private readonly UserManager<AppUser> _userManager;
 
 
         public UserController(IMapper mapper, UserManager<AppUser> _manager,
-            IJwtProvider jwtProvider)
+            IJwtProvider jwtProvider,
+
+            ISubscriptionRepository subscriptionRepository
+            )
         {
             _mapper = mapper;
             _userManager = _manager;
@@ -111,7 +115,7 @@ namespace Shortha.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = await _userManager.FindByIdAsync(userId);
-            
+
 
             if (user == null)
                 return NotFound(new ErrorResponse(HttpStatusCode.NotFound, "User not found."));

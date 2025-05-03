@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Shortha.DTO;
+using Shortha.Interfaces;
 using Shortha.Models;
 
 namespace Shortha.Repository
 {
-    public class SubscriptionRepository
+    public class SubscriptionRepository : ISubscriptionRepository
     {
         private readonly AppDB _context;
         public SubscriptionRepository(AppDB context)
@@ -14,7 +16,7 @@ namespace Shortha.Repository
         {
             return await _context.Subscriptions
                 .Include(sub => sub.Package)
-                
+
                 .Where(s => s.UserId == userId).FirstOrDefaultAsync();
         }
         public async Task<bool> CreateSubscription(Subscription subscription)
@@ -26,6 +28,50 @@ namespace Shortha.Repository
         {
             _context.Subscriptions.Update(subscription);
             return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<IEnumerable<PackageInfo>> GetAllPackages()
+        {
+            return await _context.Packages
+                .Where(p => p.IsActive)
+                .Select(p => new PackageInfo()
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Description = p.Description,
+                    Price = p.price
+                })
+                .ToListAsync();
+        }
+
+        public async Task<bool> UpgradeUser(string userId, int packageId)
+        {
+
+            var currentSubscription = await _context.Subscriptions
+               .Where(s => s.UserId == userId)
+               .FirstOrDefaultAsync();
+            var package = await _context.Packages.FindAsync(packageId);
+
+            if (currentSubscription != null || package == null)
+            {
+                return false;
+            }
+
+
+            var subscription = new Subscription
+            {
+                UserId = userId,
+                PackageId = packageId,
+
+            };
+
+            await _context.Subscriptions.AddAsync(subscription);
+
+            return await _context.SaveChangesAsync() > 0;
+
+
+
+
         }
     }
 }
