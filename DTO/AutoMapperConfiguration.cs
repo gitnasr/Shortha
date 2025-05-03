@@ -7,6 +7,14 @@ namespace Shortha.DTO
     {
         public AutoMapperConfiguration()
         {
+
+            CreateMap<AppUser, UserResponse>()
+                .ReverseMap();
+
+            CreateMap<Subscription, SubscriptionResponse>();
+            CreateMap<Package, PackageInfo>();
+
+
             CreateMap<AppUser, RegisterRequestPayload>().ReverseMap();
             CreateMap<Url, CreatedUrl>().ForMember(dest => dest.Hash, source => source.MapFrom(
 

@@ -25,6 +25,8 @@ namespace Shortha.Models
         {
             modelBuilder.ApplyConfiguration(new UrlConfiguration());
             modelBuilder.ApplyConfiguration(new VisitConfiguration());
+            modelBuilder.ApplyConfiguration(new SubscriptionConfiguration());
+            modelBuilder.ApplyConfiguration(new UserConfigration());
             base.OnModelCreating(modelBuilder);
 
         }

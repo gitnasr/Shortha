@@ -30,16 +30,14 @@ namespace Shortha.Controllers
             IEnumerable<Visit>? visits = await _visitRepository.GetVisitsByShortUrl(shortUrl);
             if (visits == null || !visits.Any())
             {
-
                 return Ok(new { Visits = Array.Empty<object>() });
-
             }
-            if (visits.Select(Visit => Visit.Url.UserId).First() != userId)
+
+            // Convert userId to Guid for comparison  
+            if (visits.Select(visit => visit.Url.UserId).First() != userId)
             {
                 return Ok(new { Visits = Array.Empty<object>() });
-
             }
-
 
             return Ok(visits.Select(v => mapper.Map<UrlVisitsResponse>(v)));
         }

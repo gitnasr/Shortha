@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -9,6 +10,7 @@ using Shortha.DTO;
 using Shortha.Interfaces;
 using Shortha.Models;
 using Shortha.Providers;
+using Shortha.Repository;
 
 namespace Shortha.Controllers
 {
@@ -19,16 +21,22 @@ namespace Shortha.Controllers
     {
         private readonly JwtProvider _tokenProvider;
         private readonly IMapper _mapper;
+        private readonly SubscriptionRepository _subscriptionRepository;
 
         private readonly UserManager<AppUser> _userManager; 
 
 
         public UserController( IMapper mapper, UserManager<AppUser> _manager,
-            JwtProvider jwtProvider)
+            JwtProvider jwtProvider,
+            SubscriptionRepository subscriptionRepository
+            )
         {
             _mapper = mapper;
             _userManager = _manager;
             _tokenProvider = jwtProvider;
+            _subscriptionRepository = subscriptionRepository;
+
+
         }
         [HttpPost("logout")]
         public async Task<IActionResult> Logout([FromBody] LogoutRequestPayload logoutRequest)
@@ -102,8 +110,29 @@ namespace Shortha.Controllers
             }
         }
 
+        [Authorize]
+        [HttpGet("me")]
+        public async Task<IActionResult> GetMe()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _userManager.FindByIdAsync(userId);
+            
 
-        
+            if (user == null)
+                return NotFound(new ErrorResponse(HttpStatusCode.NotFound, "User not found."));
+            Subscription? Subscription = await _subscriptionRepository.GetSubscriptionByUserId(userId);
+
+            var subscription = await _subscriptionRepository.GetSubscriptionByUserId(userId);
+
+            var userDto = _mapper.Map<UserResponse>(user);
+
+            if (subscription != null)
+            {
+                userDto.Subscription = _mapper.Map<SubscriptionResponse>(subscription);
+            }
+            return Ok(userDto);
+        }
+
 
     }
 }

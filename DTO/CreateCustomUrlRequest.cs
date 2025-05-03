@@ -10,5 +10,7 @@ namespace Shortha.DTO
         [Required]
         [MinLength(3)]
         public string custom { get; set; }
+
+      
     }
 }
