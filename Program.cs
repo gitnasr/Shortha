@@ -1,25 +1,15 @@
-﻿using IPinfo;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.EntityFrameworkCore;
 using Shortha.DTO;
 using Shortha.Extentions;
-using Shortha.Filters;
 using Shortha.Helpers;
-using Shortha.Interfaces;
 using Shortha.Middlewares;
 using Shortha.Models;
-using Shortha.Repository;
-using System.Text;
 
 namespace Shortha
 {
     public class Program
     {
-        public static  async Task Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
             var config = builder.Configuration;
@@ -30,7 +20,7 @@ namespace Shortha
             builder.Services.AddDependencyInjection();
 
             builder.Services.AddAppIdentity(config);
-            
+
 
             builder.Services.AddIpTracker();
             builder.Services.AddAutoMapper(typeof(AutoMapperConfiguration));

@@ -8,7 +8,7 @@ namespace Shortha.Providers
         void SetValue(string key, string value, TimeSpan expireTime);
         string? GetValue(string key);
     }
-    public class RedisProvider: IRedisProvider
+    public class RedisProvider : IRedisProvider
     {
         private readonly ConnectionMultiplexer redis;
         public RedisProvider()
@@ -36,8 +36,9 @@ namespace Shortha.Providers
             var db = GetDatabase();
             db.StringSetAsync(key, value, expireTime);
         }
-        public string? GetValue(string key) {
-        
+        public string? GetValue(string key)
+        {
+
             var db = GetDatabase();
             var value = db.StringGet(key);
             if (value.IsNullOrEmpty)

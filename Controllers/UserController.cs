@@ -1,14 +1,11 @@
-﻿using System.Net;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Shortha.DTO;
 using Shortha.Interfaces;
 using Shortha.Models;
-using Shortha.Providers;
+using System.Net;
 
 namespace Shortha.Controllers
 {
@@ -17,14 +14,14 @@ namespace Shortha.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly JwtProvider _tokenProvider;
+        private readonly IJwtProvider _tokenProvider;
         private readonly IMapper _mapper;
 
-        private readonly UserManager<AppUser> _userManager; 
+        private readonly UserManager<AppUser> _userManager;
 
 
-        public UserController( IMapper mapper, UserManager<AppUser> _manager,
-            JwtProvider jwtProvider)
+        public UserController(IMapper mapper, UserManager<AppUser> _manager,
+            IJwtProvider jwtProvider)
         {
             _mapper = mapper;
             _userManager = _manager;
@@ -66,7 +63,7 @@ namespace Shortha.Controllers
                 }
                 else
                 {
-                    return Unauthorized(new ErrorResponse(HttpStatusCode.Unauthorized,"Invalid Email or Password has been Provided!"));
+                    return Unauthorized(new ErrorResponse(HttpStatusCode.Unauthorized, "Invalid Email or Password has been Provided!"));
                 }
             }
             else
@@ -89,7 +86,7 @@ namespace Shortha.Controllers
                     // Generate JWT token
                     var token = _tokenProvider.GenerateToken(user, "Normal");
                     // Return token in response
-                    return Ok(new { Message = "User registered successfully.", Token= token });
+                    return Ok(new { Message = "User registered successfully.", Token = token });
                 }
                 else
                 {
@@ -103,7 +100,8 @@ namespace Shortha.Controllers
         }
 
 
-        
+
+
 
     }
 }

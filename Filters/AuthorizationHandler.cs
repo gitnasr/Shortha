@@ -1,16 +1,16 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Authorization;
-using Shortha.Providers;
+﻿using Microsoft.AspNetCore.Authorization;
+using Shortha.Interfaces;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Shortha.Filters
 {
-    
+
     public class NotBlacklistedRequirement : IAuthorizationRequirement { }
 
     public class NotBlacklistedHandler : AuthorizationHandler<NotBlacklistedRequirement>
     {
-        private readonly JwtProvider tokenProvider;
-        public NotBlacklistedHandler(JwtProvider _tokenProvider)
+        private readonly IJwtProvider tokenProvider;
+        public NotBlacklistedHandler(IJwtProvider _tokenProvider)
         {
             tokenProvider = _tokenProvider;
 
