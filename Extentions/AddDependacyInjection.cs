@@ -14,10 +14,10 @@ namespace Shortha.Extentions
             services.AddScoped<IURL, UrlRepository>();
             services.AddScoped<IVisit, VisitRepository>();
             services.AddScoped<GetUrlValidation>();
-            services.AddScoped<AppUser, AppUser>(); //TEMP
+            services.AddScoped<IAppUser, AppUser>(); //TEMP
             services.AddSingleton<IAuthorizationHandler, NotBlacklistedHandler>();
-            services.AddSingleton<JwtProvider, JwtProvider>();
-            services.AddSingleton<IRedisProvider, RedisProvider>(); 
+            services.AddSingleton<IJwtProvider, JwtProvider>();
+            services.AddSingleton<IRedisProvider, RedisProvider>();
 
             return services;
         }

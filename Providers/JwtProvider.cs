@@ -1,13 +1,15 @@
-﻿using System.Security.Claims;
-using System.Text;
-using Microsoft.IdentityModel.JsonWebTokens;
+﻿using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Shortha.Extentions;
+using Shortha.Interfaces;
 using Shortha.Models;
+using System.Security.Claims;
+using System.Text;
 
 namespace Shortha.Providers
 {
-    public class JwtProvider
+
+    public class JwtProvider : IJwtProvider
     {
         private readonly IConfiguration _configuration;
         private readonly IRedisProvider redis;
@@ -63,9 +65,9 @@ namespace Shortha.Providers
 
             // If the token is valid,
             // then we need to check if it's already expired.
-           var ValidationResult = await tokenHandler.ValidateTokenAsync(token,
-               AppIdentity.GetTokenValidationParameters(_configuration)
-               );
+            var ValidationResult = await tokenHandler.ValidateTokenAsync(token,
+                AppIdentity.GetTokenValidationParameters(_configuration)
+                );
 
             if (ValidationResult.IsValid)
             {
@@ -82,23 +84,23 @@ namespace Shortha.Providers
                 }
             }
 
-            
+
         }
 
         public bool IsBlacklisted(string tokenId)
         {
-            
-                var blacklistedToken = redis.GetValue(tokenId);
-                if (blacklistedToken != null)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            
-           
+
+            var blacklistedToken = redis.GetValue(tokenId);
+            if (blacklistedToken != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+
         }
 
     }
