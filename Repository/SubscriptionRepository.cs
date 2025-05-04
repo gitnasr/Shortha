@@ -8,9 +8,11 @@ namespace Shortha.Repository
     public class SubscriptionRepository : ISubscriptionRepository
     {
         private readonly AppDB _context;
-        public SubscriptionRepository(AppDB context)
+        private readonly PackagesRepository _packagesRepository;
+        public SubscriptionRepository(AppDB context, PackagesRepository packagesRepository)
         {
             _context = context;
+            _packagesRepository = packagesRepository;
         }
         public async Task<Subscription?> GetSubscriptionByUserId(string userId)
         {
@@ -29,19 +31,7 @@ namespace Shortha.Repository
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<IEnumerable<PackageInfo>> GetAllPackages()
-        {
-            return await _context.Packages
-                .Where(p => p.IsActive)
-                .Select(p => new PackageInfo()
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    Description = p.Description,
-                    Price = p.price
-                })
-                .ToListAsync();
-        }
+    
 
         public async Task<bool> UpgradeUser(string userId, int packageId)
         {

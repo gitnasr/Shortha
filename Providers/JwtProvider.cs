@@ -24,17 +24,14 @@ namespace Shortha.Providers
         {
             var SecretKey = _configuration["Jwt:Secret"];
             var SecutriyKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecretKey));
-            var credentials = new SigningCredentials(SecutriyKey, SecurityAlgorithms.HmacSha256);
+            var credentials = new SigningCredentials(SecutriyKey, SecurityAlgorithms.Aes128CbcHmacSha256);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity([
                     new Claim(ClaimTypes.NameIdentifier, appUser.Id.ToString()),
                     new Claim(ClaimTypes.Name, appUser.UserName),
                     new Claim(ClaimTypes.Email, appUser.Email),
-                          new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),    // This is a Claim that is used to identify this token exactly. for blacklisting.
-
-                    
-
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),    // This is a Claim that is used to identify this token exactly. for blacklisting.
                     new Claim(ClaimTypes.Role, role)
                     ]),
                 Expires = DateTime.UtcNow.AddMinutes(5),

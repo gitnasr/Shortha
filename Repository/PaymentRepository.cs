@@ -1,4 +1,6 @@
-﻿using Shortha.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Shortha.DTO;
+using Shortha.Models;
 
 namespace Shortha.Repository
 {
@@ -15,5 +17,15 @@ namespace Shortha.Repository
             await _context.Payments.AddAsync(payment);
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task<Payment?> GetPendingPaymentByUserId(Guid userId)
+        {
+            return await _context.Payments
+                .Where(p => p.UserId == userId && p.Status == PaymentStatus.Pending)
+                .FirstOrDefaultAsync();
+             
+        }
+
+        
     }
 }

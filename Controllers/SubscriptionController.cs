@@ -2,6 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Shortha.DTO;
 using Shortha.Interfaces;
+using Shortha.Models;
+using Shortha.Providers;
+using Shortha.Repository;
 using System.Security.Claims;
 
 namespace Shortha.Controllers
@@ -12,13 +15,18 @@ namespace Shortha.Controllers
     public class SubscriptionController : ControllerBase
     {
         private readonly ISubscriptionRepository _subscriptionRepository;
+        private readonly PaymentRepository _paymentRepository;
+        private readonly PackagesRepository _packagesRepository;
+        private readonly PaymobProvider _paymobProvider;
         public SubscriptionController(
-            ISubscriptionRepository subscriptionRepository
-
-            )
+            PaymobProvider paymobProvider,
+            ISubscriptionRepository subscriptionRepository, 
+            PaymentRepository paymentRepository, PackagesRepository packagesRepository)
         {
-
             _subscriptionRepository = subscriptionRepository;
+            _paymentRepository = paymentRepository;
+            _packagesRepository = packagesRepository;
+            _paymobProvider = paymobProvider;
 
 
         }
@@ -26,7 +34,7 @@ namespace Shortha.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllPackages()
         {
-            var packages = await _subscriptionRepository.GetAllPackages();
+            var packages = await _packagesRepository.GetAllPackages();
             return Ok(packages);
         }
 
@@ -39,20 +47,45 @@ namespace Shortha.Controllers
                 return BadRequest("Invalid package ID.");
             }
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
+           var isValidGuid =  Guid.TryParse(userId, out Guid userGuid);
+
+            if (userId == null || !isValidGuid)
             {
                 return BadRequest("User ID not found.");
             }
+            // Create a Payment Request
+            // But Check First if there's active payment request for the user
 
-            var result = await _subscriptionRepository.UpgradeUser(userId, userUpgrade.PackageId);
-            if (result)
+            var existingSubscription = await _paymentRepository.GetPendingPaymentByUserId(userGuid);
+
+            if (existingSubscription != null)
             {
-                return Ok();
+                return BadRequest("You already have a pending payment request.");
             }
-            else
+
+            // Create a new payment request
+
+            var package = await _packagesRepository.GetPackageById(userUpgrade.PackageId);
+
+            var payment = new Payment
             {
-                return BadRequest("Failed to create subscription.");
+                UserId = userGuid,
+                Amount = package.Price, // Set the amount based on the package
+                CreatedAt = DateTime.UtcNow,
+                RefranceId = Guid.NewGuid().ToString(),
+            };
+
+            // Save the payment request to the database
+            var paymentResult = await _paymentRepository.CreatePayment(payment);
+            if (!paymentResult)
+            {
+                return BadRequest("Failed to create payment request.");
             }
+
+            // Create a Payment Link Based on the payment method
+
+            var paymentLink = await _paymobProvider.CreatePaymentLink(payment, package);
+
 
         }
     }

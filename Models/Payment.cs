@@ -17,6 +17,8 @@ namespace Shortha.Models
         public string? TransactionId { get; set; } = null;
         public PaymentStatus Status { get; set; } = PaymentStatus.Pending;
 
+        public string RefranceId { get; set; } = string.Empty;
+
         public Guid SubscriptionId { get; set; }
         public virtual Subscription Subscription { get; set; } = null!;
     }
