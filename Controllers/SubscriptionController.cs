@@ -30,6 +30,7 @@ namespace Shortha.Controllers
             return Ok(packages);
         }
 
+
         [HttpPost]
         public async Task<IActionResult> UpgradeUser([FromBody] UserUpgradeRequest userUpgrade)
         {

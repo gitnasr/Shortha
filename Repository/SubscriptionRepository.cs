@@ -16,7 +16,6 @@ namespace Shortha.Repository
         {
             return await _context.Subscriptions
                 .Include(sub => sub.Package)
-
                 .Where(s => s.UserId == userId).FirstOrDefaultAsync();
         }
         public async Task<bool> CreateSubscription(Subscription subscription)
