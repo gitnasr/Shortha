@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Shortha.Application.sln" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="DeviceDetector.NET" Version="6.4.2" />
     <PackageReference Include="FluentValidation" Version="11.11.0" />
