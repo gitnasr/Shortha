@@ -18,6 +18,10 @@ namespace Shortha.Models.Configuration
                 .WithOne(u => u.Subscription)
                 .HasForeignKey<Subscription>(s => s.UserId);
 
+            builder.HasOne(s => s.Payment)
+                .WithOne(p => p.Subscription)
+                .HasForeignKey<Subscription>(s => s.PaymentId);
+
 
 
         }

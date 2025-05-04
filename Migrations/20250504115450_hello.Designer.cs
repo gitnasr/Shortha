@@ -12,8 +12,8 @@ using Shortha.Models;
 namespace Shortha.Migrations
 {
     [DbContext(typeof(AppDB))]
-    [Migration("20250503223231_mx2")]
-    partial class mx2
+    [Migration("20250504115450_hello")]
+    partial class hello
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -285,20 +285,26 @@ namespace Shortha.Migrations
                     b.Property<string>("Currency")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("PaymentDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("PaymentMethod")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("SubscriptionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("TransactionId")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -307,8 +313,6 @@ namespace Shortha.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("SubscriptionId");
 
                     b.HasIndex("UserId1");
 
@@ -329,6 +333,9 @@ namespace Shortha.Migrations
                     b.Property<int>("PackageId")
                         .HasColumnType("int");
 
+                    b.Property<int>("PaymentId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("StartDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -341,6 +348,9 @@ namespace Shortha.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("PackageId");
+
+                    b.HasIndex("PaymentId")
+                        .IsUnique();
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -504,17 +514,9 @@ namespace Shortha.Migrations
 
             modelBuilder.Entity("Shortha.Models.Payment", b =>
                 {
-                    b.HasOne("Shortha.Models.Subscription", "Subscription")
-                        .WithMany()
-                        .HasForeignKey("SubscriptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Shortha.Models.AppUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId1");
-
-                    b.Navigation("Subscription");
 
                     b.Navigation("User");
                 });
@@ -527,6 +529,12 @@ namespace Shortha.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Shortha.Models.Payment", "Payment")
+                        .WithOne("Subscription")
+                        .HasForeignKey("Shortha.Models.Subscription", "PaymentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Shortha.Models.AppUser", "User")
                         .WithOne("Subscription")
                         .HasForeignKey("Shortha.Models.Subscription", "UserId")
@@ -534,6 +542,8 @@ namespace Shortha.Migrations
                         .IsRequired();
 
                     b.Navigation("Package");
+
+                    b.Navigation("Payment");
 
                     b.Navigation("User");
                 });
@@ -574,6 +584,12 @@ namespace Shortha.Migrations
             modelBuilder.Entity("Shortha.Models.Package", b =>
                 {
                     b.Navigation("Subscriptions");
+                });
+
+            modelBuilder.Entity("Shortha.Models.Payment", b =>
+                {
+                    b.Navigation("Subscription")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Shortha.Models.Url", b =>
