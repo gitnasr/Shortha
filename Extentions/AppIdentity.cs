@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using Shortha.Domain;
 using Shortha.Filters;
-using Shortha.Models;
-using Shortha.Providers;
+using Shortha.Infrastructure.Configurations;
 using System.Text;
 
 namespace Shortha.Extentions
@@ -31,7 +31,7 @@ namespace Shortha.Extentions
             MaxFailedAccessAttempts = 3
         };
 
-     
+
         public static TokenValidationParameters GetTokenValidationParameters(IConfiguration config)
         {
             return new TokenValidationParameters
@@ -48,7 +48,8 @@ namespace Shortha.Extentions
         }
 
 
-        public static IServiceCollection AddAppIdentity(this IServiceCollection services, IConfiguration config) {
+        public static IServiceCollection AddAppIdentity(this IServiceCollection services, IConfiguration config)
+        {
 
             services.AddIdentity<AppUser, IdentityRole>(
                 options =>
@@ -56,9 +57,9 @@ namespace Shortha.Extentions
                     options.User.RequireUniqueEmail = true;
 
                     options.Password = PasswordResttictions;
-                    options.SignIn=SignInOptions;
+                    options.SignIn = SignInOptions;
                     options.Lockout = LockoutOptions;
-                    })
+                })
                 .AddEntityFrameworkStores<AppDB>();
             services.AddAuthentication(options =>
             {
@@ -67,7 +68,7 @@ namespace Shortha.Extentions
                 options.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(options =>
             {
-                options.TokenValidationParameters = GetTokenValidationParameters(config) ;
+                options.TokenValidationParameters = GetTokenValidationParameters(config);
             });
 
 

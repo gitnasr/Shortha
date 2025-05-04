@@ -2,8 +2,8 @@
 using Shortha.DTO;
 using Shortha.Extentions;
 using Shortha.Helpers;
+using Shortha.Infrastructure.Configurations;
 using Shortha.Middlewares;
-using Shortha.Models;
 
 namespace Shortha
 {

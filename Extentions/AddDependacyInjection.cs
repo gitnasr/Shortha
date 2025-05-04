@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Shortha.Application;
+using Shortha.Domain;
 using Shortha.Filters;
-using Shortha.Interfaces;
-using Shortha.Models;
+using Shortha.Infrastructure.Repository;
 using Shortha.Providers;
-using Shortha.Repository;
 
 namespace Shortha.Extentions
 {
@@ -15,13 +15,12 @@ namespace Shortha.Extentions
             services.AddScoped<IVisit, VisitRepository>();
             services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
             services.AddScoped<GetUrlValidation>();
-            services.AddScoped<IAppUser, AppUser>();
+            services.AddScoped<AppUser, AppUser>();
             services.AddSingleton<IAuthorizationHandler, NotBlacklistedHandler>();
             services.AddSingleton<IJwtProvider, JwtProvider>();
             services.AddSingleton<IRedisProvider, RedisProvider>();
             services.AddScoped<PackagesRepository>();
             services.AddScoped<PaymentRepository>();
-            services.AddScoped<PaymobProvider>();
 
 
             return services;

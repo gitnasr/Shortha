@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shortha.Application;
+using Shortha.Domain;
 using Shortha.DTO;
-using Shortha.Interfaces;
-using Shortha.Models;
-using Shortha.Providers;
-using Shortha.Repository;
+using Shortha.Infrastructure.Repository;
 using System.Security.Claims;
 
 namespace Shortha.Controllers
@@ -17,16 +16,13 @@ namespace Shortha.Controllers
         private readonly ISubscriptionRepository _subscriptionRepository;
         private readonly PaymentRepository _paymentRepository;
         private readonly PackagesRepository _packagesRepository;
-        private readonly PaymobProvider _paymobProvider;
         public SubscriptionController(
-            PaymobProvider paymobProvider,
-            ISubscriptionRepository subscriptionRepository, 
+            ISubscriptionRepository subscriptionRepository,
             PaymentRepository paymentRepository, PackagesRepository packagesRepository)
         {
             _subscriptionRepository = subscriptionRepository;
             _paymentRepository = paymentRepository;
             _packagesRepository = packagesRepository;
-            _paymobProvider = paymobProvider;
 
 
         }
@@ -47,7 +43,7 @@ namespace Shortha.Controllers
                 return BadRequest("Invalid package ID.");
             }
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-           var isValidGuid =  Guid.TryParse(userId, out Guid userGuid);
+            var isValidGuid = Guid.TryParse(userId, out Guid userGuid);
 
             if (userId == null || !isValidGuid)
             {
@@ -84,8 +80,8 @@ namespace Shortha.Controllers
 
             // Create a Payment Link Based on the payment method
 
-            var paymentLink = await _paymobProvider.CreatePaymentLink(payment, package);
-
+            //var paymentLink = await _paymobProvider.Create(payment, package);
+            return Ok();
 
         }
     }

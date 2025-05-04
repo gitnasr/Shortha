@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shortha.Application;
+using Shortha.Domain;
 using Shortha.DTO;
 using Shortha.Filters;
-using Shortha.Interfaces;
-using Shortha.Models;
 using System.Net;
 
 namespace Shortha.Controllers

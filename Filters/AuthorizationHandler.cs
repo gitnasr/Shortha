@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Shortha.Interfaces;
+using Shortha.Application;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace Shortha.Filters

@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Shortha.Application;
+using Shortha.Domain;
 using Shortha.DTO;
-using Shortha.Interfaces;
-using Shortha.Models;
 using System.Net;
 using System.Security.Claims;
 

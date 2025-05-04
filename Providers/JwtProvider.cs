@@ -1,8 +1,8 @@
 ﻿using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using Shortha.Application;
+using Shortha.Domain;
 using Shortha.Extentions;
-using Shortha.Interfaces;
-using Shortha.Models;
 using System.Security.Claims;
 using System.Text;
 
