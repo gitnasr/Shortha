@@ -32,7 +32,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Paymob\Paymob.csproj" />
     <ProjectReference Include="..\Shortha.Contracts\Shortha.Application.csproj" />
     <ProjectReference Include="..\Shortha.Domain\Shortha.Domain.csproj" />
     <ProjectReference Include="..\Shortha.Infrastructure\Shortha.Infrastructure.csproj" />

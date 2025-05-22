@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Shortha.DTO;
 
 namespace Shortha.Controllers
 {
@@ -7,10 +6,6 @@ namespace Shortha.Controllers
     [ApiController]
     public class WebhookController : ControllerBase
     {
-        [HttpPost("paymob")]
-        public async Task<IActionResult> Webhook([FromBody] PaymobWebhookPayload user)
-        {
-            return Ok(user);
-        }
+
     }
 }

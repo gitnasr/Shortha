@@ -10,19 +10,16 @@ namespace Shortha.Helpers
         private readonly int _hashLength = 5;
         private string GetRandomSeed()
         {
-          return Guid.NewGuid().ToString();
+            return Guid.NewGuid().ToString();
         }
         public string GenerateHash(string input)
         {
-            string CombinedInput = input + GetRandomSeed();
-            // Create a SHA256 hash of the input
+            var CombinedInput = input + GetRandomSeed();
+
             using (var sha256 = SHA256.Create())
             {
-                // Convert the input string to a byte array and compute the hash
                 var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(CombinedInput));
-                // Convert the Bytes to a Base64 string
                 var base64Hash = Convert.ToBase64String(hashBytes);
-                // Remove any non-alphanumeric characters and truncate to the desired length
                 var shortHash = new StringBuilder();
                 foreach (var character in base64Hash)
                 {

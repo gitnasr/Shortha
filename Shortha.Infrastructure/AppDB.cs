@@ -1,29 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
 using Shortha.Domain;
 
 namespace Shortha.Infrastructure.Configurations
 {
-    public class AppDBFactory : IDesignTimeDbContextFactory<AppDB>
-    {
-        public AppDB CreateDbContext(string[] args)
-        {
-            var config = new ConfigurationBuilder()
-         .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../Shortha"))
-         .AddJsonFile("appsettings.json")
-         .Build();
 
-
-            var connectionString = config.GetConnectionString("DefaultConnection");
-
-            var optionsBuilder = new DbContextOptionsBuilder<AppDB>();
-            optionsBuilder.UseSqlServer(connectionString);
-
-            return new AppDB(optionsBuilder.Options);
-        }
-    }
     public class AppDB : IdentityDbContext<AppUser>
 
     {

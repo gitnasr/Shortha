@@ -11,7 +11,7 @@ namespace Shortha.Helpers
         {
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-            string[] roleNames = { "Admin", "Preimum", "Normal", "Restricted" };
+            string[] roleNames = { "Admin", "Premium", "Normal", "Restricted" };
 
             foreach (var roleName in roleNames)
             {
@@ -34,13 +34,13 @@ namespace Shortha.Helpers
             }
             DBProvider.Packages.Add(new Package
             {
-                Name = "Preimim",
+                Name = "Premium",
                 price = 5.0m,
                 MaxUrls = -1,
                 CreatedAt = DateTime.UtcNow,
-                Description = "The Preimim Package of our Service, Create Unlimted with Usfual insghits and Analytics Service",
+                Description = "The Premium Package of our Service, Create Unlimted with Usfual insghits and Analytics Service",
             });
-            DBProvider.SaveChanges();
+            await DBProvider.SaveChangesAsync();
         }
     }
 }

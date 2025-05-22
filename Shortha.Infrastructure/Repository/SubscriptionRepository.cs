@@ -32,15 +32,21 @@ namespace Shortha.Infrastructure.Repository
             return await _context.SaveChangesAsync() > 0;
         }
 
+        public async Task<Subscription?> IsUserSubscribed(string userId)
+        {
+            return await _context.Subscriptions
+                                 .Where(s => s.UserId == userId)
+                                 .FirstOrDefaultAsync();
+        }
+
 
 
         public async Task<bool> UpgradeUser(string userId, int packageId)
         {
 
-            var currentSubscription = await _context.Subscriptions
-               .Where(s => s.UserId == userId)
-               .FirstOrDefaultAsync();
-            var package = await _context.Packages.FindAsync(packageId);
+            var currentSubscription = await IsUserSubscribed(userId);
+
+            var package = await _packagesRepository.GetPackageById(packageId);
 
             if (currentSubscription != null || package == null)
             {
